@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  
+  username String  @id @db.VarChar(100)
+  email    String   @db.VarChar(100)
+  password String   @db.VarChar(100)
+  no_telp  String?   @db.VarChar(100)
+  token    String?  @db.VarChar(100)
+
+  forums Forum[]
+  orders Order[]
+
+  @@map("users")
+}
+
+model Category{
+   id         Int    @id @default(autoincrement())
+   judul      String @db.VarChar(100)
+
+   items Item[]
+   @@map("categories")
+}
+
+model Item {
+  id            Int    @id @default(autoincrement())
+  name          String @db.VarChar(100)
+  category_id   Int 
+  harga         String @db.VarChar(100)
+  deskripsi     String @db.VarChar(100)
+
+  kategori Category @relation(fields:[category_id], references:[id])
+
+  @@map("items")
+}
+
+model Forum {
+  id            Int    @id @default(autoincrement())
+  username      String @db.VarChar(100)
+  waktu_post    DateTime
+  isi_post      String @db.VarChar(265)
+
+  user User @relation(fields:[username], references:[username])
+
+  @@map("forums")
+}
+
+model Order {
+  id            Int    @id @default(autoincrement())
+  username      String @db.VarChar(100)
+  order_date    DateTime
+
+  user User @relation(fields:[username], references:[username])
+
+  @@map("orders")
+}
